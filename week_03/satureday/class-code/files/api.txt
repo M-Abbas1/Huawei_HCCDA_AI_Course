@@ -1,0 +1,6 @@
+Press Ctrl + Shift + Esc to open Task Manager.
+Click on the Details tab on the left sidebar (or top tab, depending on your Windows version).
+Chapter 2 AI Application Integration Requirement Analysis.pdf
+This tab shows the exact executable names.Scroll down and look for python.exe.
+ArithmeticErrorThe Secret Trick: Right-click the column headers (like Name, PID), click Select columns, and check the box for Command line.
+Look at the newly added Command Line column for your python.exe processes. You will see the exact command you typed, such as python -m uvicorn main:app or the path to your virtual environment's script folder.

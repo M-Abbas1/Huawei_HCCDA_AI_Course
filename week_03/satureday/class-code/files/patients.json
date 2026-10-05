@@ -1,0 +1,102 @@
+{
+"P001":{
+    "name": "Ali Khan",
+    "city": "Peshawar",
+    "age": 28,
+    "gender": "Male",
+    "height": 175,
+    "weight": 68,
+    "bmi": 22.2,
+    "verdict": "Normal"
+  },
+  "P002":{
+    "name": "Sara Ahmed",
+    "city": "Lahore",
+    "age": 34,
+    "gender": "Female",
+    "height": 162,
+    "weight": 82,
+    "bmi": 31.2,
+    "verdict": "Obese"
+  },
+  "P003":{
+    "name": "Usman Ali",
+    "city": "Islamabad",
+    "age": 41,
+    "gender": "Male",
+    "height": 180,
+    "weight": 92,
+    "bmi": 28.4,
+    "verdict": "Overweight"
+  },
+  "P004":{
+    "name": "Ayesha Malik",
+    "city": "Karachi",
+    "age": 25,
+    "gender": "Female",
+    "height": 165,
+    "weight": 52,
+    "bmi": 19.1,
+    "verdict": "Normal"
+  },
+  "P005":{
+    "name": "Hamza Shah",
+    "city": "Quetta",
+    "age": 52,
+    "gender": "Male",
+    "height": 172,
+    "weight": 105,
+    "bmi": 35.5,
+    "verdict": "Obese"
+  },
+  "P006":{
+    "name": "Fatima Noor",
+    "city": "Multan",
+    "age": 30,
+    "gender": "Female",
+    "height": 158,
+    "weight": 70,
+    "bmi": 28.0,
+    "verdict": "Overweight"
+  },
+  "P007":{
+    "name": "Bilal Ahmed",
+    "city": "Rawalpindi",
+    "age": 22,
+    "gender": "Male",
+    "height": 168,
+    "weight": 48,
+    "bmi": 17.0,
+    "verdict": "Underweight"
+  },
+  "P008":{
+    "name": "Zainab Tariq",
+    "city": "Faisalabad",
+    "age": 45,
+    "gender": "Female",
+    "height": 160,
+    "weight": 76,
+    "bmi": 29.7,
+    "verdict": "Overweight"
+  },
+  "P009":{
+    "name": "Omar Hassan",
+    "city": "Peshawar",
+    "age": 37,
+    "gender": "Male",
+    "height": 183,
+    "weight": 75,
+    "bmi": 22.4,
+    "verdict": "Normal"
+  },
+  "P010":{
+    "name": "Mariam Asif",
+    "city": "Lahore",
+    "age": 58,
+    "gender": "Female",
+    "height": 155,
+    "weight": 91,
+    "bmi": 37.9,
+    "verdict": "Obese"
+  }
+}

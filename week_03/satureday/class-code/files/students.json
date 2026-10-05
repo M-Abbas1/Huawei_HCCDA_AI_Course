@@ -1,0 +1,222 @@
+{
+  "S001": {
+    "Name": "Ali Khan",
+    "Age": 20,
+    "Gender": "Male",
+    "Attendance_Percent": 92,
+    "Study_Hours_Per_Week": 12,
+    "Assignments_Completed": 9,
+    "Midterm_Score": 82,
+    "Final_Score": 86,
+    "Passed": "Yes"
+  },
+  "S002": {
+    "Name": "Ahmed Raza",
+    "Age": 21,
+    "Gender": "Male",
+    "Attendance_Percent": 85,
+    "Study_Hours_Per_Week": 9,
+    "Assignments_Completed": 8,
+    "Midterm_Score": 74,
+    "Final_Score": 78,
+    "Passed": "Yes"
+  },
+  "S003": {
+    "Name": "Sara Malik",
+    "Age": 19,
+    "Gender": "Female",
+    "Attendance_Percent": 96,
+    "Study_Hours_Per_Week": 15,
+    "Assignments_Completed": 10,
+    "Midterm_Score": 91,
+    "Final_Score": 93,
+    "Passed": "Yes"
+  },
+  "S004": {
+    "Name": "Hassan Shah",
+    "Age": 22,
+    "Gender": "Male",
+    "Attendance_Percent": 78,
+    "Study_Hours_Per_Week": 7,
+    "Assignments_Completed": 7,
+    "Midterm_Score": 65,
+    "Final_Score": 69,
+    "Passed": "Yes"
+  },
+  "S005": {
+    "Name": "Ayesha Noor",
+    "Age": 20,
+    "Gender": "Female",
+    "Attendance_Percent": 94,
+    "Study_Hours_Per_Week": 14,
+    "Assignments_Completed": 10,
+    "Midterm_Score": 88,
+    "Final_Score": 91,
+    "Passed": "Yes"
+  },
+  "S006": {
+    "Name": "Usman Tariq",
+    "Age": 21,
+    "Gender": "Male",
+    "Attendance_Percent": 88,
+    "Study_Hours_Per_Week": 10,
+    "Assignments_Completed": 9,
+    "Midterm_Score": 79,
+    "Final_Score": 82,
+    "Passed": "Yes"
+  },
+  "S007": {
+    "Name": "Fatima Ali",
+    "Age": 19,
+    "Gender": "Female",
+    "Attendance_Percent": 91,
+    "Study_Hours_Per_Week": 11,
+    "Assignments_Completed": 9,
+    "Midterm_Score": 84,
+    "Final_Score": 87,
+    "Passed": "Yes"
+  },
+  "S008": {
+    "Name": "Hamza Iqbal",
+    "Age": 23,
+    "Gender": "Male",
+    "Attendance_Percent": 73,
+    "Study_Hours_Per_Week": 6,
+    "Assignments_Completed": 6,
+    "Midterm_Score": 58,
+    "Final_Score": 61,
+    "Passed": "No"
+  },
+  "S009": {
+    "Name": "Zainab Khan",
+    "Age": 20,
+    "Gender": "Female",
+    "Attendance_Percent": 97,
+    "Study_Hours_Per_Week": 16,
+    "Assignments_Completed": 10,
+    "Midterm_Score": 94,
+    "Final_Score": 96,
+    "Passed": "Yes"
+  },
+  "S010": {
+    "Name": "Bilal Ahmed",
+    "Age": 22,
+    "Gender": "Male",
+    "Attendance_Percent": 82,
+    "Study_Hours_Per_Week": 8,
+    "Assignments_Completed": 8,
+    "Midterm_Score": 70,
+    "Final_Score": 74,
+    "Passed": "Yes"
+  },
+  "S011": {
+    "Name": "Maham Riaz",
+    "Age": 19,
+    "Gender": "Female",
+    "Attendance_Percent": 89,
+    "Study_Hours_Per_Week": 10,
+    "Assignments_Completed": 9,
+    "Midterm_Score": 77,
+    "Final_Score": 80,
+    "Passed": "Yes"
+  },
+  "S012": {
+    "Name": "Omar Farooq",
+    "Age": 21,
+    "Gender": "Male",
+    "Attendance_Percent": 95,
+    "Study_Hours_Per_Week": 13,
+    "Assignments_Completed": 10,
+    "Midterm_Score": 89,
+    "Final_Score": 92,
+    "Passed": "Yes"
+  },
+  "S013": {
+    "Name": "Hira Saeed",
+    "Age": 20,
+    "Gender": "Female",
+    "Attendance_Percent": 87,
+    "Study_Hours_Per_Week": 9,
+    "Assignments_Completed": 8,
+    "Midterm_Score": 81,
+    "Final_Score": 85,
+    "Passed": "Yes"
+  },
+  "S014": {
+    "Name": "Danish Akram",
+    "Age": 23,
+    "Gender": "Male",
+    "Attendance_Percent": 76,
+    "Study_Hours_Per_Week": 7,
+    "Assignments_Completed": 7,
+    "Midterm_Score": 62,
+    "Final_Score": 66,
+    "Passed": "No"
+  },
+  "S015": {
+    "Name": "Maryam Zahid",
+    "Age": 19,
+    "Gender": "Female",
+    "Attendance_Percent": 93,
+    "Study_Hours_Per_Week": 14,
+    "Assignments_Completed": 10,
+    "Midterm_Score": 90,
+    "Final_Score": 94,
+    "Passed": "Yes"
+  },
+  "S016": {
+    "Name": "Saad Hussain",
+    "Age": 22,
+    "Gender": "Male",
+    "Attendance_Percent": 84,
+    "Study_Hours_Per_Week": 9,
+    "Assignments_Completed": 8,
+    "Midterm_Score": 73,
+    "Final_Score": 77,
+    "Passed": "Yes"
+  },
+  "S017": {
+    "Name": "Iqra Javed",
+    "Age": 20,
+    "Gender": "Female",
+    "Attendance_Percent": 98,
+    "Study_Hours_Per_Week": 17,
+    "Assignments_Completed": 10,
+    "Midterm_Score": 96,
+    "Final_Score": 98,
+    "Passed": "Yes"
+  },
+  "S018": {
+    "Name": "Abdullah Khan",
+    "Age": 21,
+    "Gender": "Male",
+    "Attendance_Percent": 80,
+    "Study_Hours_Per_Week": 8,
+    "Assignments_Completed": 7,
+    "Midterm_Score": 68,
+    "Final_Score": 71,
+    "Passed": "Yes"
+  },
+  "S019": {
+    "Name": "Laiba Aslam",
+    "Age": 19,
+    "Gender": "Female",
+    "Attendance_Percent": 90,
+    "Study_Hours_Per_Week": 12,
+    "Assignments_Completed": 9,
+    "Midterm_Score": 85,
+    "Final_Score": 89,
+    "Passed": "Yes"
+  },
+  "S020": {
+    "Name": "Talha Mehmood",
+    "Age": 22,
+    "Gender": "Male",
+    "Attendance_Percent": 86,
+    "Study_Hours_Per_Week": 11,
+    "Assignments_Completed": 9,
+    "Midterm_Score": 80,
+    "Final_Score": 83,
+    "Passed": "Yes"
+  }
+}

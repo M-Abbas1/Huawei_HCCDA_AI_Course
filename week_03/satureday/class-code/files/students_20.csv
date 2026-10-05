@@ -1,0 +1,21 @@
+Student_ID,Name,Age,Gender,Attendance_Percent,Study_Hours_Per_Week,Assignments_Completed,Midterm_Score,Final_Score,Passed
+S001,Ali Khan,20,Male,92,12,9,82,86,Yes
+S002,Ahmed Raza,21,Male,85,9,8,74,78,Yes
+S003,Sara Malik,19,Female,96,15,10,91,93,Yes
+S004,Hassan Shah,22,Male,78,7,7,65,69,Yes
+S005,Ayesha Noor,20,Female,94,14,10,88,91,Yes
+S006,Usman Tariq,21,Male,88,10,9,79,82,Yes
+S007,Fatima Ali,19,Female,91,11,9,84,87,Yes
+S008,Hamza Iqbal,23,Male,73,6,6,58,61,No
+S009,Zainab Khan,20,Female,97,16,10,94,96,Yes
+S010,Bilal Ahmed,22,Male,82,8,8,70,74,Yes
+S011,Maham Riaz,19,Female,89,10,9,77,80,Yes
+S012,Omar Farooq,21,Male,95,13,10,89,92,Yes
+S013,Hira Saeed,20,Female,87,9,8,81,85,Yes
+S014,Danish Akram,23,Male,76,7,7,62,66,No
+S015,Maryam Zahid,19,Female,93,14,10,90,94,Yes
+S016,Saad Hussain,22,Male,84,9,8,73,77,Yes
+S017,Iqra Javed,20,Female,98,17,10,96,98,Yes
+S018,Abdullah Khan,21,Male,80,8,7,68,71,Yes
+S019,Laiba Aslam,19,Female,90,12,9,85,89,Yes
+S020,Talha Mehmood,22,Male,86,11,9,80,83,Yes

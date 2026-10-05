@@ -1,0 +1,2 @@
+adding new text to data.txt
+new text 
