@@ -1,0 +1,16 @@
+{
+  "project": "Iris Flower Classification",
+  "feature_names": [
+    "sepal length (cm)",
+    "sepal width (cm)",
+    "petal length (cm)",
+    "petal width (cm)"
+  ],
+  "class_names": [
+    "setosa",
+    "versicolor",
+    "virginica"
+  ],
+  "accuracy": 0.9333333333333333,
+  "random_state": 42
+}
