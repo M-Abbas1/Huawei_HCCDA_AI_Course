@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windows PowerShell Path-Routing & State Machine (.venv)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --ps-blue: #012456;
+      --ps-border: #3b82f6;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warn: #f59e0b;
+      --accent: #38bdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px; line-height: 1.5; }
+    .container { max-width: 1180px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    h1 { font-size: 1.35rem; font-weight: 700; color: var(--text); }
+    .subtitle { font-size: 0.9rem; color: var(--muted); }
+
+    /* Controls */
+    .controls-bar { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; background: var(--panel); padding: 14px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 18px; }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .group-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-right: 6px; font-weight: 600; }
+    button { background: #0f172a; color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
+    button:hover { border-color: var(--accent); }
+    button.active-conflict { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: #fca5a5; }
+    button.active-safe { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: #6ee7b7; }
+    button.active-cmd { background: rgba(56, 189, 248, 0.2); border-color: var(--accent); color: #7dd3fc; }
+
+    /* Diagnostic Banner */
+    .banner { padding: 14px 18px; border-radius: 8px; font-weight: 600; font-size: 0.92rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; transition: all 0.25s; }
+    .banner.conflict { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: #fecaca; }
+    .banner.safe { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: #a7f3d0; }
+
+    /* 3-Column Pipeline Layout */
+    .pipeline { display: grid; grid-template-columns: 1.1fr 1fr 1.3fr; gap: 18px; align-items: stretch; }
+    @media (max-width: 960px) { .pipeline { grid-template-columns: 1fr; } }
+
+    .stage-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .stage-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); font-weight: 700; display: flex; justify-content: space-between; }
+
+    /* PowerShell Terminal Box */
+    .ps-terminal { background: var(--ps-blue); border: 2px solid var(--ps-border); border-radius: 8px; padding: 14px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.84rem; color: #e2e8f0; min-height: 210px; display: flex; flex-direction: column; justify-content: space-between; }
+    .ps-header { font-size: 0.72rem; color: #93c5fd; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px; margin-bottom: 10px; }
+    .ps-badge { color: #4ade80; font-weight: bold; }
+    .ps-cmd { color: #fde047; }
+    .ps-out { color: #cbd5e1; margin-top: 8px; white-space: pre-wrap; word-break: break-all; font-size: 0.8rem; }
+
+    /* PATH Priority List */
+    .path-box { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-family: 'Consolas', monospace; font-size: 0.8rem; }
+    .path-entry { padding: 8px; border-radius: 6px; margin-bottom: 6px; border-left: 4px solid transparent; word-break: break-all; transition: all 0.25s; }
+    .path-entry.winner { background: rgba(16, 185, 129, 0.15); border-left-color: var(--success); color: #ecfdf5; font-weight: 600; }
+    .path-entry.conflict-winner { background: rgba(239, 68, 68, 0.15); border-left-color: var(--danger); color: #fef2f2; font-weight: 600; }
+    .path-entry.shadowed { opacity: 0.45; color: var(--muted); }
+
+    /* C:\ Drive Directories */
+    .disk-folder { background: #0f172a; border: 2px solid var(--border); border-radius: 8px; padding: 12px; transition: all 0.25s; position: relative; }
+    .disk-folder.active-safe-folder { border-color: var(--success); box-shadow: 0 0 16px rgba(16, 185, 129, 0.25); }
+    .disk-folder.active-conflict-folder { border-color: var(--danger); box-shadow: 0 0 16px rgba(239, 68, 68, 0.25); }
+    .disk-folder.inactive-folder { opacity: 0.38; }
+    .folder-header { font-family: 'Consolas', monospace; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 99px; font-family: sans-serif; }
+    .tag.active { background: var(--success); color: #052e16; font-weight: 700; }
+    .tag.conflict { background: var(--danger); color: #fff; font-weight: 700; }
+    .tag.idle { background: #334155; color: #cbd5e1; }
+    .sub-tree { font-family: 'Consolas', monospace; font-size: 0.78rem; color: #cbd5e1; padding-left: 10px; border-left: 2px solid #475569; }
+    .pkg-pill { display: inline-block; background: #1e293b; border: 1px solid #475569; padding: 2px 7px; border-radius: 4px; margin: 3px 4px 0 0; font-size: 0.74rem; }
+    .pkg-pill.warn { border-color: var(--danger); color: #fca5a5; }
+    .pkg-pill.good { border-color: var(--success); color: #86efac; }
+
+    /* Footer Note */
+    .teacher-note { margin-top: 18px; background: rgba(56, 189, 248, 0.08); border-left: 4px solid var(--accent); padding: 12px 16px; border-radius: 6px; font-size: 0.86rem; color: #e2e8f0; }
+    code { font-family: 'Consolas', monospace; background: rgba(0,0,0,0.35); padding: 2px 5px; border-radius: 4px; color: #7dd3fc; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>Windows PowerShell Virtual Environment Path Router (C:\)</h1>
+      <div class="subtitle">Interactive Mental Model for AI Coursework — How <code>Activate.ps1</code> Redirects <code>$env:PATH</code> &amp; <code>Lib\site-packages</code></div>
+    </div>
+  </header>
+
+  <div class="controls-bar">
+    <div class="btn-group">
+      <span class="group-label">1. Select Environment State:</span>
+      <button id="env-global" class="active-conflict" onclick="setEnv('global')">Global Windows (No .venv)</button>
+      <button id="env-cv" onclick="setEnv('cv')">Activate .venv_cv (Legacy CV)</button>
+      <button id="env-llm" onclick="setEnv('llm')">Activate .venv_llm (Modern LLM)</button>
+    </div>
+    <div class="btn-group">
+      <span class="group-label">2. Inspect Command:</span>
+      <button id="cmd-run" class="active-cmd" onclick="setCmd('run')">python (Import Test)</button>
+      <button id="cmd-where" onclick="setCmd('where')">where.exe python</button>
+      <button id="cmd-policy" onclick="setCmd('policy')">Fix ExecutionPolicy</button>
+    </div>
+  </div>
+
+  <div id="status-banner" class="banner conflict"></div>
+
+  <div class="pipeline">
+    <!-- Stage 1: PowerShell -->
+    <div class="stage-card">
+      <div class="stage-title"><span>Stage 1: Windows PowerShell</span><span>Terminal Session</span></div>
+      <div class="ps-terminal">
+        <div>
+          <div class="ps-header">Windows PowerShell (x64)</div>
+          <div id="ps-activation-line" style="margin-bottom: 8px; color: #94a3b8;"></div>
+          <div id="ps-prompt-line"></div>
+          <div id="ps-output" class="ps-out"></div>
+        </div>
+        <div style="font-size: 0.73rem; color: #93c5fd; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 6px;">
+          Tip: Always check for the green <b>(.venv)</b> prefix on the left!
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage 2: $env:PATH Router -->
+    <div class="stage-card">
+      <div class="stage-title"><span>Stage 2: $env:PATH Router</span><span>Semicolon (;) Priority</span></div>
+      <div style="font-size: 0.82rem; color: var(--muted);">
+        Windows searches folders top-to-bottom via <code>$env:PATH -split ';'</code> and stops at the <b>first</b> <code>python.exe</code> it finds:
+      </div>
+      <div id="path-list" class="path-box"></div>
+      <div style="font-size: 0.78rem; color: var(--muted); margin-top: auto;">
+        <b>Why <code>where.exe</code>?</b> In PowerShell, typing <code>where python</code> fails silently because <code>where</code> is aliased to <code>Where-Object</code>. Always include <code>.exe</code>!
+      </div>
+    </div>
+
+    <!-- Stage 3 & 4: C:\ Disk Folders -->
+    <div class="stage-card">
+      <div class="stage-title"><span>Stage 3 &amp; 4: C:\ Drive Folders</span><span>Scripts\ &amp; Lib\site-packages\</span></div>
+
+      <div id="folder-global" class="disk-folder">
+        <div class="folder-header">
+          <span>C:\Users\Student\AppData\Local\...\Python311\</span>
+          <span id="tag-global" class="tag conflict">ACTIVE</span>
+        </div>
+        <div class="sub-tree">
+          <div>├── python.exe &amp; Scripts\pip.exe</div>
+          <div>└── Lib\site-packages\ <i>(Shared Global Pantry)</i></div>
+          <div>
+            <span class="pkg-pill warn">numpy==2.1.0 (Overwrote 1.24!)</span>
+            <span class="pkg-pill">torch==2.4.0</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="folder-cv" class="disk-folder">
+        <div class="folder-header">
+          <span>C:\AI_Course\cv_midterm\.venv_cv\</span>
+          <span id="tag-cv" class="tag idle">ISOLATED</span>
+        </div>
+        <div class="sub-tree">
+          <div>├── pyvenv.cfg</div>
+          <div>├── <b>Scripts\</b>python.exe, pip.exe, Activate.ps1</div>
+          <div>└── <b>Lib\site-packages\</b></div>
+          <div>
+            <span class="pkg-pill good">numpy==1.24.0</span>
+            <span class="pkg-pill good">opencv-python==4.8.0</span>
+            <span class="pkg-pill good">torch==2.0.1+cu118</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="folder-llm" class="disk-folder">
+        <div class="folder-header">
+          <span>C:\AI_Course\llm_agent\.venv_llm\</span>
+          <span id="tag-llm" class="tag idle">ISOLATED</span>
+        </div>
+        <div class="sub-tree">
+          <div>├── pyvenv.cfg</div>
+          <div>├── <b>Scripts\</b>python.exe, pip.exe, Activate.ps1</div>
+          <div>└── <b>Lib\site-packages\</b></div>
+          <div>
+            <span class="pkg-pill good">numpy==2.1.0</span>
+            <span class="pkg-pill good">transformers==4.45.0</span>
+            <span class="pkg-pill good">torch==2.5.0+cu124</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="teacher-callout" class="teacher-note"></div>
+</div>
+
+<script>
+  let currentEnv = 'global';
+  let currentCmd = 'run';
+
+  const states = {
+    global: {
+      bannerClass: 'banner conflict',
+      bannerText: '⚠️ COLLISION STATE (No .venv Active): Global NumPy 2.1.0 overwrote 1.24.0 — Your Computer Vision Midterm crashes!',
+      actLine: '# No virtual environment activated',
+      promptPrefix: 'PS C:\\AI_Course> ',
+      paths: [
+        { text: '1. C:\\Users\\Student\\AppData\\Local\\Programs\\Python\\Python311\\', status: 'conflict-winner', note: '← MATCH! Uses Global python.exe' },
+        { text: '2. C:\\Users\\Student\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\', status: 'conflict-winner', note: '← Uses Global pip.exe' },
+        { text: '3. C:\\Windows\\System32\\', status: 'shadowed', note: '' }
+      ],
+      cmds: {
+        run: {
+          cmd: 'python cv_midterm\\detect.py',
+          out: 'import numpy as np  # Loads 2.1.0 from AppData\\Local\\...\\Lib\\site-packages\nTraceback (most recent call last):\n  File "C:\\AI_Course\\cv_midterm\\detect.py", line 14\nAttributeError: module \'numpy\' has no attribute \'bool0\'.\n[CRASH: Legacy CV repo strictly requires numpy==1.24.0!]'
+        },
+        where: {
+          cmd: 'where.exe python',
+          out: 'C:\\Users\\Student\\AppData\\Local\\Programs\\Python\\Python311\\python.exe\nC:\\Users\\Student\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe'
+        },
+        policy: {
+          cmd: 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser',
+          out: '[Success] ExecutionPolicy updated for CurrentUser.\nYou can now run .\\.venv\\Scripts\\Activate.ps1 without the red PSSecurityException error!'
+        }
+      },
+      teacher: '<b>Windows vs. macOS/Linux Note:</b> Without an active environment, every <code>pip install</code> dumps packages directly into <code>AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages</code>.'
+    },
+    cv: {
+      bannerClass: 'banner safe',
+      bannerText: '✅ ISOLATED & SAFE (.venv_cv Active): PowerShell routes to .venv_cv\\Scripts\\python.exe and loads NumPy 1.24.0 cleanly.',
+      actLine: 'PS C:\\AI_Course\\cv_midterm> .\\.venv_cv\\Scripts\\Activate.ps1',
+      promptPrefix: '<span class="ps-badge">(.venv_cv)</span> PS C:\\AI_Course\\cv_midterm> ',
+      paths: [
+        { text: '1. C:\\AI_Course\\cv_midterm\\.venv_cv\\Scripts\\', status: 'winner', note: '← PREPENDED BY Activate.ps1! Stops here first.' },
+        { text: '2. C:\\Users\\Student\\AppData\\Local\\Programs\\Python\\Python311\\', status: 'shadowed', note: '(Bypassed / Ignored)' },
+        { text: '3. C:\\Windows\\System32\\', status: 'shadowed', note: '' }
+      ],
+      cmds: {
+        run: {
+          cmd: 'python detect.py',
+          out: 'Loaded numpy==1.24.0 from C:\\AI_Course\\cv_midterm\\.venv_cv\\Lib\\site-packages\nLoaded torch==2.0.1+cu118\n[SUCCESS] Object detection model initialized on GPU!'
+        },
+        where: {
+          cmd: 'where.exe python',
+          out: 'C:\\AI_Course\\cv_midterm\\.venv_cv\\Scripts\\python.exe\nC:\\Users\\Student\\AppData\\Local\\Programs\\Python\\Python311\\python.exe'
+        },
+        policy: {
+          cmd: 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser',
+          out: 'Already enabled! That is why .\\.venv_cv\\Scripts\\Activate.ps1 ran cleanly.'
+        }
+      },
+      teacher: '<b>Look at Stage 3:</b> On Windows, executables live in <code>.venv_cv\\Scripts\\</code> (not <code>bin/</code>), and packages live directly inside <code>.venv_cv\\Lib\\site-packages\\</code>.'
+    },
+    llm: {
+      bannerClass: 'banner safe',
+      bannerText: '✅ ISOLATED & SAFE (.venv_llm Active): Modern LLM runs on NumPy 2.1.0 + CUDA 12.4 while Project A stays untouched!',
+      actLine: 'PS C:\\AI_Course\\llm_agent> .\\.venv_llm\\Scripts\\Activate.ps1',
+      promptPrefix: '<span class="ps-badge">(.venv_llm)</span> PS C:\\AI_Course\\llm_agent> ',
+      paths: [
+        { text: '1. C:\\AI_Course\\llm_agent\\.venv_llm\\Scripts\\', status: 'winner', note: '← PREPENDED BY Activate.ps1! Stops here first.' },
+        { text: '2. C:\\Users\\Student\\AppData\\Local\\Programs\\Python\\Python311\\', status: 'shadowed', note: '(Bypassed / Ignored)' },
+        { text: '3. C:\\Windows\\System32\\', status: 'shadowed', note: '' }
+      ],
+      cmds: {
+        run: {
+          cmd: 'python chat.py',
+          out: 'Loaded numpy==2.1.0 from C:\\AI_Course\\llm_agent\\.venv_llm\\Lib\\site-packages\nLoaded transformers==4.45.0 & torch==2.5.0+cu124\n[SUCCESS] Local RAG Agent ready on port 8000!'
+        },
+        where: {
+          cmd: 'where.exe python',
+          out: 'C:\\AI_Course\\llm_agent\\.venv_llm\\Scripts\\python.exe\nC:\\Users\\Student\\AppData\\Local\\Programs\\Python\\Python311\\python.exe'
+        },
+        policy: {
+          cmd: 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser',
+          out: 'Already enabled! That is why .\\.venv_llm\\Scripts\\Activate.ps1 ran cleanly.'
+        }
+      },
+      teacher: '<b>Side-by-Side Isolation:</b> Even though <code>.venv_llm</code> uses <code>numpy==2.1.0</code>, <code>.venv_cv</code> keeps its own untouched copy of <code>numpy==1.24.0</code>.'
+    }
+  };
+
+  function setEnv(env) {
+    currentEnv = env;
+    render();
+  }
+
+  function setCmd(cmd) {
+    currentCmd = cmd;
+    render();
+  }
+
+  function render() {
+    const st = states[currentEnv];
+    document.getElementById('env-global').className = currentEnv === 'global' ? 'active-conflict' : '';
+    document.getElementById('env-cv').className = currentEnv === 'cv' ? 'active-safe' : '';
+    document.getElementById('env-llm').className = currentEnv === 'llm' ? 'active-safe' : '';
+
+    document.getElementById('cmd-run').className = currentCmd === 'run' ? 'active-cmd' : '';
+    document.getElementById('cmd-where').className = currentCmd === 'where' ? 'active-cmd' : '';
+    document.getElementById('cmd-policy').className = currentCmd === 'policy' ? 'active-cmd' : '';
+
+    const banner = document.getElementById('status-banner');
+    banner.className = st.bannerClass;
+    banner.innerHTML = st.bannerText;
+
+    document.getElementById('ps-activation-line').textContent = st.actLine;
+    const cmdObj = st.cmds[currentCmd];
+    document.getElementById('ps-prompt-line').innerHTML = st.promptPrefix + '<span class="ps-cmd">' + cmdObj.cmd + '</span>';
+    document.getElementById('ps-output').textContent = cmdObj.out;
+
+    const pathContainer = document.getElementById('path-list');
+    pathContainer.innerHTML = st.paths.map(p => `
+      <div class="path-entry ${p.status}">
+        <div>${p.text}</div>
+        ${p.note ? `<div style="font-size:0.73rem; margin-top:3px; color:#fde047;">${p.note}</div>` : ''}
+      </div>
+    `).join('');
+
+    // Folders
+    const fGlobal = document.getElementById('folder-global');
+    const fCv = document.getElementById('folder-cv');
+    const fLlm = document.getElementById('folder-llm');
+
+    fGlobal.className = 'disk-folder ' + (currentEnv === 'global' ? 'active-conflict-folder' : 'inactive-folder');
+    fCv.className = 'disk-folder ' + (currentEnv === 'cv' ? 'active-safe-folder' : 'inactive-folder');
+    fLlm.className = 'disk-folder ' + (currentEnv === 'llm' ? 'active-safe-folder' : 'inactive-folder');
+
+    document.getElementById('tag-global').className = 'tag ' + (currentEnv === 'global' ? 'conflict' : 'idle');
+    document.getElementById('tag-global').textContent = currentEnv === 'global' ? 'ACTIVE (CONFLICT)' : 'BYPASSED';
+
+    document.getElementById('tag-cv').className = 'tag ' + (currentEnv === 'cv' ? 'active' : 'idle');
+    document.getElementById('tag-cv').textContent = currentEnv === 'cv' ? 'ACTIVE (.venv_cv)' : 'ISOLATED';
+
+    document.getElementById('tag-llm').className = 'tag ' + (currentEnv === 'llm' ? 'active' : 'idle');
+    document.getElementById('tag-llm').textContent = currentEnv === 'llm' ? 'ACTIVE (.venv_llm)' : 'ISOLATED';
+
+    document.getElementById('teacher-callout').innerHTML = st.teacher;
+  }
+
+  render();
+</script>
+</body>
+</html>
