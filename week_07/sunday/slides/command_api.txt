@@ -1,0 +1,27 @@
+Create Virtual Environment
+python -m venv <environment_name>
+
+
+Activate it:
+PowerShell: .venv\Scripts\Activate.ps1
+Command Prompt (cmd): .venv\Scripts\activate.bat
+
+The Workflow to Lock and Recreate Environments
+Lock your current packages:  pip freeze > requirements.txt
+Install from the lock file later: pip install -r requirements.txt
+
+
+Pro-Tip: Using pip-tools for Advanced Pinning
+pip install pip-tools
+pip-compile requirements.in
+
+
+Install Uvicorn
+pip install uvicorn
+uvicorn main:app --reload
+uvicorn main:app --host 0.0.0.0 --port 5000 --reload
+uvicorn main:app --workers 4
+
+
+Windows (PowerShell): Run this command to find the active process:	
+Get-Process -Name "*uvicorn*"
