@@ -2,3 +2,6 @@
 *.pptx
 *.venv
 .venv
+*__pycache__
+*rps
+*rps.zip
