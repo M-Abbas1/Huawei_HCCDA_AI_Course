@@ -1,4 +1,4 @@
-"""Train and evaluate the ANN baseline or CNN."""
+"""Train and evaluate a CNN or pretrained MobileNetV2 on CIFAR-100."""
 
 import argparse
 import json
@@ -8,29 +8,33 @@ import numpy as np
 import tensorflow as tf
 
 from .data import NUM_CLASSES, load_datasets
-from .model import build_ann, build_cnn
+from .model import build_cnn, build_mobilenetv2
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", choices=("ann", "cnn"), default="cnn")
+    parser.add_argument("--model", choices=("cnn", "mobilenetv2"), default="cnn")
     parser.add_argument("--epochs", type=int, default=12)
     parser.add_argument("--batch-size", type=int, default=32)
-    parser.add_argument("--dataset-dir", default="datasets")
     parser.add_argument("--output-dir", default="models")
     args = parser.parse_args()
 
+    if args.epochs <= 0:
+        parser.error("--epochs must be a positive integer.")
+    if args.batch_size <= 0:
+        parser.error("--batch-size must be a positive integer.")
+
     tf.keras.utils.set_random_seed(42)
-    train_ds, val_ds, test_ds, class_names = load_datasets(args.batch_size, args.dataset_dir)
+    train_ds, val_ds, test_ds, class_names = load_datasets(args.batch_size)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if args.model == "cnn":
         model = build_cnn(NUM_CLASSES)
-        model_path = output_dir / "rps_cnn.keras"
+        model_path = output_dir / "cifar100_cnn.keras"
     else:
-        model = build_ann(NUM_CLASSES)
-        model_path = output_dir / "rps_ann.keras"
+        model = build_mobilenetv2(NUM_CLASSES)
+        model_path = output_dir / "cifar100_mobilenetv2.keras"
 
     model.summary()
     callbacks = [
